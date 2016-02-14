@@ -12,4 +12,4 @@ server "#{fetch(:server_name)}",
 user: "#{fetch(:user)}",
   roles: %w{web}
 
-set :branch, 'develop'
+set :branch, 'master'

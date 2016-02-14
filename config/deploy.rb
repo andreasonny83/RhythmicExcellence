@@ -2,20 +2,20 @@
 lock '3.4.0'
 
 # replace Wordpress-Capistrano-Boilerplate with your application name
-set :application, 'Wordpress-Capistrano-Boilerplate'
+set :application, 'rhythmicexcellence-test'
 
 # the user name for SSH
-set :user, 'deploy'
+set :user, 'sonny883'
 
 # your server name
-set :server_name, 'MY_WEBSERVER.com'
+set :server_name, 'sonnywebdesign.com'
 
 # the public folder in where you want to create the symbolic link to the deployed release
 set :public_html, "/home/#{fetch(:user)}/public_html"
 
 set :scm, :git
 # the Git repository you want to deploy with Capistrano
-set :repo_url, 'git@github.com:andreasonny83/Wordpress-Capistrano-Boilerplate.git'
+set :repo_url, 'git@github.com:andreasonny83/RhythmicExcellence.git'
 # SubmoduleStrategy is used for including all the related submodule (eg. WordPress)
 set :git_strategy, Capistrano::Git::SubmoduleStrategy
 
