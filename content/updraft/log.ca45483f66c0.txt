@@ -1,0 +1,12 @@
+0000.000 (1) Opened log file at time: Thu, 04 Feb 2016 21:57:57 +0000 on http://rhythmicexcellence
+0000.003 (1) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.11.2 WP: 4.2.4 PHP: 5.5.26 (Darwin SonnYs-MBP.lan 15.3.0 Darwin Kernel Version 15.3.0: Thu Dec 10 18:40:58 PST 2015; root:xnu-3248.30.4~1/RELEASE_X86_64 x86_64) MySQL: 5.5.42 Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 16.8M | 17.3M) multisite: N mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.004 (1) Free space on disk containing Updraft's temporary directory: 171210.7 Mb
+0000.006 (1) This backup task is either complete or began over 2 days ago: ending (1454623077.74, )
+0000.000 (1) Opened log file at time: Sat, 06 Feb 2016 12:49:03 +0000 on http://localhost:8888/rhythmicexcellence
+0000.001 (1) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.11.2 WP: 4.2.4 PHP: 5.6.10 (Darwin SonnYs-MBP.lan 15.3.0 Darwin Kernel Version 15.3.0: Thu Dec 10 18:40:58 PST 2015; root:xnu-3248.30.4~1/RELEASE_X86_64 x86_64) MySQL: 5.5.42 Server: Apache/2.2.29 (Unix) mod_wsgi/3.5 Python/2.7.10 PHP/5.6.10 mod_ssl/2.2.29 OpenSSL/0.9.8zg DAV/2 mod_fastcgi/2.4.6 mod_perl/2.0.9 Perl/v5.22.0 safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 16M | 16.5M) multisite: N mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.002 (1) Free space on disk containing Updraft's temporary directory: 168969.4 Mb
+0000.003 (1) This backup task is either complete or began over 2 days ago: ending (1454762943.45, )
+0000.000 (1) Opened log file at time: Sat, 06 Feb 2016 12:50:05 +0000 on http://localhost:8888/rhythmicexcellence
+0000.002 (1) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.11.2 WP: 4.2.4 PHP: 5.6.10 (Darwin SonnYs-MBP.lan 15.3.0 Darwin Kernel Version 15.3.0: Thu Dec 10 18:40:58 PST 2015; root:xnu-3248.30.4~1/RELEASE_X86_64 x86_64) MySQL: 5.5.42 Server: Apache/2.2.29 (Unix) mod_wsgi/3.5 Python/2.7.10 PHP/5.6.10 mod_ssl/2.2.29 OpenSSL/0.9.8zg DAV/2 mod_fastcgi/2.4.6 mod_perl/2.0.9 Perl/v5.22.0 safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 16.6M | 17.3M) multisite: N mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.003 (1) Free space on disk containing Updraft's temporary directory: 168971.6 Mb
+0000.005 (1) This backup task is either complete or began over 2 days ago: ending (1454763005.33, )

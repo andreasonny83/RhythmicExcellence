@@ -11,7 +11,7 @@ else {
 	include( dirname( __FILE__ ) . '/dev.config.php' );
 }
 
-define( 'DB_CHARSET', 'utf8' );
+define( 'DB_CHARSET', 'utf8mb4' );
 define( 'DB_COLLATE', '' );
 define( 'WPLANG', 'en_GB' );
 
@@ -32,7 +32,8 @@ define( 'WP_SITEURL', WP_HOME . '/wordpress' );
 define( 'WP_CONTENT_DIR', $_SERVER['DOCUMENT_ROOT'].'/content' );
 define( 'WP_CONTENT_URL', WP_HOME . '/content' );
 
-/* That's all, stop editing! Happy blogging. */
+// Disable people edit file from inside WordPress
+define( 'DISALLOW_FILE_EDIT', true );
 
 /** Absolute path to the WordPress directory. */
 if ( !defined('ABSPATH') )

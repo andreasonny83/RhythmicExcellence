@@ -18,3 +18,6 @@ node_modules
 
 #Apache
 .htaccess
+
+# Config
+config.php
