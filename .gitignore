@@ -21,7 +21,7 @@ node_modules
 .htaccess
 
 # Config
-config.php
+/config.php
 
 # prod files
 prod.*
@@ -33,7 +33,7 @@ content/cache
 content/updraft/backup_*
 content/updraft/log*.txt
 
-#w3tc
+# w3tc
 content/w3tc-config
 content/w3tc-config/*
 content/db.php
