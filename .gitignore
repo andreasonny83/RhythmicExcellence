@@ -38,3 +38,5 @@ content/w3tc-config
 content/db.php
 content/object-cache.php
 content/advanced-cache.php
+content/plugins/w3tc-wp-loader.php
+content/w3tc-config/master.php
