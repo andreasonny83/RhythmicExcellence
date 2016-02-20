@@ -2,7 +2,7 @@
 lock '3.4.0'
 
 # replace Wordpress-Capistrano-Boilerplate with your application name
-set :application, 'rhythmicexcellence-test'
+set :application, 'rhythmicexcellence'
 
 # the user name for SSH
 set :user, 'sonny883'
