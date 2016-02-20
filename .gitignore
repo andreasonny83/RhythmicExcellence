@@ -24,3 +24,10 @@ config.php
 
 # prod files
 prod.*
+
+# cache
+content/cache/object
+
+# backups
+content/updraft/backup_*
+content/updraft/log*.txt
