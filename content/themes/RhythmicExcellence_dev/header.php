@@ -17,8 +17,8 @@
   <meta name="generator" content="RhythmicExcellence">
   <meta name="robots" content="index, follow">
   <meta name="revisit-after" content="1 month">
-  <meta name="theme-color" content="#886D90">
-  <meta name="msapplication-TileColor" content="#886D90">
+  <meta name="theme-color" content="#4A4667">
+  <meta name="msapplication-TileColor" content="#4A4667">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
