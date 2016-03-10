@@ -7786,8 +7786,9 @@ body.single section {
     width: 1220px; } }
 
 @media (max-width: 420px) {
-  .mobile .col-xs-6.responsive {
-    width: 100%; } }
+  .col-xs-6.responsive .img-responsive {
+    width: 90%;
+    height: 90%; } }
 
 #infoWindow {
   color: #000;

@@ -366,8 +366,9 @@ body.single section {
 @media (max-width:420px) {
   // rewrite bootstrap rules
   .col-xs-6.responsive {
-    .mobile & {
-      width: 100%;
+    .img-responsive {
+      width: 90%;
+      height: 90%;
     }
   }
 }
