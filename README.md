@@ -119,6 +119,10 @@ The code and the documentation are released under the [MIT License](http://andre
 
 ## Changelog
 
+## 1.2.2
+* Responsive css hotfixed<br>
+2016.03.10
+
 ## 1.2.1
 * Some responsive css fixed
 * manifest.json updated<br>
