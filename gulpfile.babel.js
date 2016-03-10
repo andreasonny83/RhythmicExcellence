@@ -113,17 +113,17 @@ gulp.task('styles:build', () => {
     }).on('error', $.sass.logError))
     .pipe($.concat('app.css'))
     .pipe(gulp.dest(bases.src + 'styles'))
-    .pipe($.uncss({
-      html: [
-        'http://stage.rhythmicexcellence.sonnywebdesign.com',
-        'http://stage.rhythmicexcellence.sonnywebdesign.com/rhythmic-gymnastics/',
-        'http://stage.rhythmicexcellence.sonnywebdesign.com/calendar/calendar/'
-      ],
-      media: [
-        '(max-width: 400px) handheld and (orientation: landscape)',
-        '(min-width: 400px) handheld and (orientation: landscape)'
-      ]
-    }))
+    // .pipe($.uncss({
+    //   html: [
+    //     'http://stage.rhythmicexcellence.sonnywebdesign.com',
+    //     'http://stage.rhythmicexcellence.sonnywebdesign.com/rhythmic-gymnastics/',
+    //     'http://stage.rhythmicexcellence.sonnywebdesign.com/calendar/calendar/'
+    //   ],
+    //   media: [
+    //     '(max-width: 400px) handheld and (orientation: landscape)',
+    //     '(min-width: 400px) handheld and (orientation: landscape)'
+    //   ]
+    // }))
     // Concatenate and minify styles
     .pipe($.cssnano({
       autoprefixer: AUTOPREFIXER_BROWSERS,
