@@ -1,6 +1,6 @@
 /**
  RhythmicExcellence
- v1.2.0
+ v1.2.1
  created by Andrea SonnY <andreasonny83@gmail.com>
  license MIT
 **/

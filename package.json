@@ -1,6 +1,6 @@
 {
   "name": "rhythmic-excellence",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "This is a WordPress project running on www.rhythmicExcellence.lonon",
   "main": "index.php",
   "scripts": {
