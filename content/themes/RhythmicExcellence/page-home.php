@@ -36,7 +36,7 @@ get_template_part( 'verify' );
       foreach ( $myposts as $post ) : setup_postdata( $post );
         $image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large' );
       ?>
-        <div class="col-xs-4 col-md-3 disciplines responsive">
+        <div class="col-xs-6 col-sm-4 col-md-3 disciplines responsive">
           <a class="boxed" href="<?php echo get_permalink(); ?>">
             <h5 class="higlighted"><?php the_title(); ?></h5>
             <div class="avatar">
@@ -69,7 +69,7 @@ get_template_part( 'verify' );
       foreach ( $myposts as $post ) : setup_postdata( $post );
         $image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large' );
         ?>
-        <div class="col-xs-4 col-md-3 responsive">
+        <div class="col-xs-6 col-sm-4 col-md-3 responsive">
           <div>
             <a href="#" class="boxed">
               <div>

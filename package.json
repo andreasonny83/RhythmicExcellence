@@ -49,6 +49,7 @@
     "gulp-size": "^2.0.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.3",
+    "gulp-uncss": "^1.0.4",
     "gulp-util": "^3.0.7",
     "run-sequence": "^1.1.5",
     "watch": "^0.17.1"

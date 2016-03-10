@@ -357,17 +357,18 @@ body.single section {
   }
 }
 
-// rewrite bootstrap rules
-
-.col-xs-6.responsive {
-  .mobile & {
-    width: 50%;
-  }
-}
-
 @media (min-width:1280px) {
   .container {
     width:1220px;
+  }
+}
+
+@media (max-width:420px) {
+  // rewrite bootstrap rules
+  .col-xs-6.responsive {
+    .mobile & {
+      width: 100%;
+    }
   }
 }
 

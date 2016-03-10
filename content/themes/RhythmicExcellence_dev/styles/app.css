@@ -7781,12 +7781,13 @@ body.single section {
     background-color: #EEE;
     box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5); }
 
-.mobile .col-xs-6.responsive {
-  width: 50%; }
-
 @media (min-width: 1280px) {
   .container {
     width: 1220px; } }
+
+@media (max-width: 420px) {
+  .mobile .col-xs-6.responsive {
+    width: 100%; } }
 
 #infoWindow {
   color: #000;
