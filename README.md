@@ -119,6 +119,11 @@ The code and the documentation are released under the [MIT License](http://andre
 
 ## Changelog
 
+## 1.2.0
+* Gulp task introduced
+* Performance optimization<br>
+2016.03.10
+
 ## 1.1.5
 * Introducing Wordpress Capistrano Boilerplate
 * New Gulp task runner in substitution of Grunt<br>
