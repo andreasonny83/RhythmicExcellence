@@ -367,8 +367,8 @@ body.single section {
   // rewrite bootstrap rules
   .col-xs-6.responsive {
     .img-responsive {
-      width: 90%;
-      height: 90%;
+      width: auto;
+      height: 120px;
     }
   }
 }
