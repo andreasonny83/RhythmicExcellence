@@ -6,8 +6,9 @@ npm-debug.log*
 
 # Dependency directory
 node_modules
+bower_components
 
-# Optional npm cache directory
+# npm cache directory
 .npm
 
 # Optional REPL history
@@ -17,17 +18,21 @@ node_modules
 *.gem
 .bundle
 
-#Apache
+# Apache
 .htaccess
 
 # Config
 /config.php
+dev.config.php
 
 # prod files
 prod.*
 
 # cache
 content/cache
+
+# Temp
+.temp
 
 # backups
 content/updraft/backup_*
@@ -36,6 +41,7 @@ content/updraft/log*.txt
 # w3tc
 content/w3tc-config
 content/w3tc-config/*
+content/w3tc-config/master-admin.php
 content/db.php
 content/object-cache.php
 content/advanced-cache.php

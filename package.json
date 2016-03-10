@@ -1,0 +1,59 @@
+{
+  "name": "rhythmic-excellence",
+  "version": "1.2.0",
+  "description": "This is a WordPress project running on www.rhythmicExcellence.lonon",
+  "main": "index.php",
+  "scripts": {
+    "test": "git status && echo 'no test present'; exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreasonny83/RhythmicExcellence.git"
+  },
+  "keywords": [
+    "wordpress",
+    "wordpress themes",
+    "capistrano"
+  ],
+  "author": {
+    "name": "Andrea SonnY",
+    "email": "andreasonny83@gmail.com",
+    "url": "https://github.com/andreasonny83"
+  },
+  "private": true,
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreasonny83/RhythmicExcellence/issues"
+  },
+  "homepage": "https://github.com/andreasonny83/RhythmicExcellence#readme",
+  "devDependencies": {
+    "babel-core": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0",
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-flatten": "^0.2.0",
+    "gulp-header": "^1.7.1",
+    "gulp-html-replace": "^1.5.5",
+    "gulp-imagemin": "^2.4.0",
+    "gulp-load-plugins": "^1.2.0",
+    "gulp-minify-inline": "^0.2.0",
+    "gulp-newer": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-rev": "^7.0.0",
+    "gulp-rev-rep": "^1.1.1",
+    "gulp-sass": "^2.2.0",
+    "gulp-size": "^2.0.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "run-sequence": "^1.1.5",
+    "watch": "^0.17.1"
+  },
+  "engines": {
+    "node": ">=0.12"
+  }
+}

@@ -1,18 +1,8 @@
 <?php
-/** Enable W3 Total Cache */
-define('WP_CACHE', true); // Added by W3 Total Cache
-
 // ===================================================
 // Load database info and local development parameters
 // ===================================================
-if ( file_exists( dirname( __FILE__ ) . '/config.php' ) ) {
-	// if we are on a live environment, use config.php
-	include( dirname( __FILE__ ) . '/config.php' );
-}
-else {
-	// otherwise, on a development environment, use the dev.config.php
-	include( dirname( __FILE__ ) . '/dev.config.php' );
-}
+require( dirname( __FILE__ ) . '/config.php' );
 
 define( 'DB_CHARSET', 'utf8mb4' );
 define( 'DB_COLLATE', '' );
@@ -33,7 +23,7 @@ define( 'WP_HOME',    'http://'.$_SERVER['SERVER_NAME'] );
 define( 'WP_SITEURL', WP_HOME . '/wordpress' );
 
 define( 'WP_CONTENT_DIR', $_SERVER['DOCUMENT_ROOT'].'/content' );
-define( 'WP_CONTENT_URL', WP_HOME . '/content' );
+define( 'WP_CONTENT_URL', '/content' );
 
 // Disable people edit file from inside WordPress
 define( 'DISALLOW_FILE_EDIT', true );

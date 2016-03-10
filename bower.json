@@ -1,0 +1,30 @@
+{
+  "name": "rhythmic-excellence",
+  "description": "This is a WordPress project running on www.rhythmicExcellence.lonon",
+  "main": "index.php",
+  "authors": [
+    "Andrea SonnY <andreasonny83@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "wordpress",
+    "wordpress",
+    "themes",
+    "capistrano"
+  ],
+  "homepage": "https://github.com/andreasonny83/RhythmicExcellence",
+  "moduleType": [
+    "es6"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^1.12.1"
+  }
+}

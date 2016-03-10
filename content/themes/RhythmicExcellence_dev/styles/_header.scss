@@ -1,0 +1,236 @@
+/**
+* Header
+**/
+header {
+  overflow: visible;
+  padding-top: 70px;
+  padding-bottom: 50px;
+  background-image: url( '../img/background.jpg' );
+  background-size: cover;
+}
+
+#home-logo {
+  width: 100%;
+}
+
+/**
+* Menu
+**/
+
+nav.main {
+
+  .top {
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
+    transition: background .5s ease-in-out,padding .5s ease-in-out;
+
+    .single & {
+      position: relative;
+    }
+
+    .single &,
+    .fixed &,
+    .mobile &,
+    .tablet & {
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background-color: $main;
+    }
+
+    .fixed:not(.single):not(.mobile):not(.tablet) & {
+      box-shadow: 0 2px 5px rgba(0,0,0,.5);
+    }
+
+    #responsive-menu {
+      float: left;
+      width: 45px;
+      display: none;
+
+      .mobile &,
+      .tablet & {
+        display: block;
+      }
+    }
+
+    .menu-logo {
+      height: 69px;
+      float: left;
+
+      .single &,
+      .fixed &,
+      .mobile &,
+      .tablet & {
+        float: none;
+      }
+
+      h1, #responsive-menu {
+        margin: 0;
+        padding: 0;
+        font-family: "Lato", sans-serif;
+				font-weight: 700;
+        font-size: 26px;
+        line-height: 69px;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        text-shadow: 0px 1px 1px rgba(0,0,0,.4);
+      }
+
+      h1 {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        -webkit-transition: .3s font-size linear;
+        transition: .3s font-size linear;
+
+        .tablet & {
+          font-size: 21px;
+        }
+        .mobile & {
+          font-size: 16px;
+        }
+      }
+    }
+
+    #menu-main-menu-responsive,
+    #menu-main-menu-desktop {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        display: inline-block;
+        padding: 0;
+
+        a {
+          display: block;
+          padding: 15px;
+          font-family: "Lato", sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          text-decoration: none;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+
+          &:hover {
+            background-color: rgba(255,255,255,0.4);
+          }
+        }
+      }
+    }
+    #menu-main-menu-desktop {
+      margin: 6px 0px;
+      background-color: rgba(255,255,255,0.4);
+      box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+      @include border-radius(1px);
+      float: right;
+
+      a {
+        color: #000;
+        -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+      }
+
+      .single:not(.mobile):not(.tablet) &,
+      .fixed:not(.mobile):not(.tablet) & {
+        float: none;
+        background: none;
+        box-shadow: none;
+        display: block;
+        text-align: center;
+
+        a {
+          color: #fff;
+        }
+      }
+    }
+
+    #menu-main-menu-responsive {
+      a {
+        color: #fff;
+      }
+    }
+
+  }
+
+  .left {
+    position: fixed;
+    left: -100%;
+    top: 69px;
+    bottom: 0;
+    width: 70%;
+    background-color: $main;
+    box-shadow: 3px -2px 20px 1px #000;
+    overflow-y: auto;
+    -webkit-transition: .8s width cubic-bezier(0.65, 0.05, 0.36, 1), .8s left cubic-bezier(0.65, 0.05, 0.36, 1);
+    transition: .8s width cubic-bezier(0.65, 0.05, 0.36, 1), .8s left cubic-bezier(0.65, 0.05, 0.36, 1);
+    z-index: 998;
+
+    .menu-open & {
+      left: 0;
+    }
+    .mobile & {
+      width: 90%;
+    }
+
+    ul {
+      margin: 0;
+      padding: 20px 0 50px;
+      list-style-type: none;
+
+      li {
+        a {
+          display: block;
+          font-size: 21px;
+          padding: 18px 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-transform: uppercase;
+          white-space: nowrap;
+          -webkit-transition: .1s all linear;
+          transition: .1s all linear;
+
+          &:hover {
+            background-color: rgba(255,255,255,0.4);
+          }
+        }
+      }
+    }
+  }
+
+  .overflow {
+    display: none;
+
+    .menu-open & {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: rgba(0,0,0,.5);
+      z-index: 997;
+    }
+  }
+
+}
+
+#menu-main-menu-desktop,
+#menu-main-menu-responsive {
+  .mobile &,
+  .tablet & {
+    display: none;
+  }
+}
+
+body.menu-open {
+  overflow: hidden;
+}
