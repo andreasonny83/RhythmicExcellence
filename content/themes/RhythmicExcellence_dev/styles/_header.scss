@@ -25,7 +25,6 @@ nav.main {
     top: 0;
     width: 100%;
     z-index: 999;
-    -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
     transition: background .5s ease-in-out,padding .5s ease-in-out;
 
     .single & {

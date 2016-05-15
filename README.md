@@ -105,6 +105,17 @@ Because the `linked_files` array is pointing to `config.php` and `.htaccess`, yo
 You can copy the .htaccess from this project inside your `shared` folder and also create a copy of `prod.config.php` to use as your deployment config.php.
 The shared folder will be created inside your `deploy_to` path followed by `shared` (eg. home/my_user/capistrano/rhythmicexcellence/stage/shared)
 
+## Development
+
+This project uses `Gulp` for generating new theme versions.
+Install NodeJS, NPM, then run `npm install` to install all the project dependencies.
+
+While in development mode, run `gulp` from inside the project root directory to compile and watch your `RhythmicExcellence_dev` directory.
+
+Once done, compile a distribution version of the theme running
+
+    gulp build
+
 ## Contributing
 
 1. Fork it!
@@ -118,6 +129,15 @@ The shared folder will be created inside your `deploy_to` path followed by `shar
 The code and the documentation are released under the [MIT License](http://andreasonny.mit-license.org).
 
 ## Changelog
+
+## 1.3.0
+* Photo gallery using [FooGallery](https://en-gb.wordpress.org/plugins/foogallery/) WordPress plugin
+* `uploads` folder updated
+* `gallery` CSS file implemented to overwrite FooGallery rules
+* JS Code Styleguide fixed
+* Capistrano `clean_folder` task updated
+* Documentation updated<br>
+2016.05.15
 
 ## 1.2.2
 * Responsive css hotfixed<br>
@@ -150,6 +170,9 @@ The code and the documentation are released under the [MIT License](http://andre
 * Security improved on server side and with .htaccess
 * Map module is now initialised only where a map is preset to avoid generating unwanted js errors on the page
 * Footer share button redesigned for a better responsive design support
+* Single page menu
+* Responsive menu
+* Timetable renamed to Calendar
 * Removed the default link on media images attached on WordPress
 * Code optimised around the website
 * Other minor improvement

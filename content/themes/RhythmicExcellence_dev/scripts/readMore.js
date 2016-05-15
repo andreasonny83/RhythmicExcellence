@@ -21,7 +21,7 @@ readMore.init = function() {
 		$( '.openFull .popupBox' ).addClass( 'die' );
 		setTimeout(function() {
 			$( '.openFull' ).remove();
-		}, 500 );
+		}, 1000 );
 		$( 'body' ).css( 'overflow', 'initial' );
 
 		return false;
@@ -32,7 +32,7 @@ readMore.init = function() {
 		$( this ).find( '.popupBox' ).addClass( 'die' );
 		setTimeout(function() {
 			$( '.openFull' ).remove();
-		}, 500 );
+		}, 1000 );
 		$( 'body' ).css( 'overflow', 'initial' );
 	});
 };

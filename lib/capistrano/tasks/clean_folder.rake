@@ -9,6 +9,14 @@ task :clean_folder do
                                                   " -o -name 'README.md'"\
                                                   " -o -name 'REVISION'"\
                                                   " -o -name 'LICENSE'"\
+                                                  " -o -name '.editorconfig'"\
+                                                  " -o -name '.babelrc'"\
+                                                  " -o -name '.bowerrc'"\
+                                                  " -o -name '.jscsrc'"\
+                                                  " -o -name '.jshintrc'"\
+                                                  " -o -name 'bower.json'"\
+                                                  " -o -name 'package.json'"\
+                                                  " -o -name 'gulpfile.babel.js'"\
                                                   " -o -type d -name '.bundle'"\
                                                   " -o -type d -name 'lib'"\
                                                   " -o -type d -name 'config'"\

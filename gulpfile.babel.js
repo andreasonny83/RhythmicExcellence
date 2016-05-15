@@ -27,28 +27,30 @@ import pkg from './package.json';
 const $ = gulpLoadPlugins();
 
 const bases = {
- dist: 'content/themes/RhythmicExcellence/',
- src: 'content/themes/RhythmicExcellence_dev/',
- tmp: '.temp/'
+  dist: 'content/themes/RhythmicExcellence/',
+  src: 'content/themes/RhythmicExcellence_dev/',
+  tmp: '.temp/',
 },
 
 paths = {
- html: '*.*',
- fonts: 'fonts/**/*',
- images: 'img/**/*',
- sass: 'styles/main.scss',
- css: 'styles/vendor/*.*',
- scripts: 'scripts/*.js'
+  html: '*.*',
+  fonts: 'fonts/**/*',
+  images: 'img/**/*',
+  sass: 'styles/main.scss',
+  css: 'styles/vendor/*.*',
+  scripts: 'scripts/*.js',
 },
 
-BANNER = ['\n',
+BANNER = [
+  '\n',
   '  RhythmicExcellence',
   '  ==================',
   '  version v' + pkg.version,
   '  created by ' + pkg.author.name + ' <' + pkg.author.email + '>',
   '  link ' + pkg.homepage,
   '  license ' + pkg.license,
-  ''],
+  '',
+],
 
 VERSION_BANNER = '\n RhythmicExcellence\n v' + pkg.version +
                   '\n created by ' + pkg.author.name + ' <' + pkg.author.email + '>' +
@@ -63,7 +65,7 @@ AUTOPREFIXER_BROWSERS = [
   'opera >= 23',
   'ios >= 7',
   'android >= 4.4',
-  'bb >= 10'
+  'bb >= 10',
 ];
 
 gulp.task('banner', () =>
@@ -72,12 +74,12 @@ gulp.task('banner', () =>
 
 // Delete the distribution theme folder
 gulp.task('clean', ['banner'], () => {
-  return del([
+  del([
     bases.dist,
-    bases.tmp
-  ]).then( paths => {
+    bases.tmp,
+  ]).then(paths => {
     gutil.log('Deleting temp files from:\n', paths.join('\n'));
-  })
+  });
 });
 
 // Lint JavaScript
@@ -88,14 +90,14 @@ gulp.task('lint', () =>
 );
 
 gulp.task('styles', () => {
-  return gulp.src([
+  gulp.src([
       bases.src + paths.css,
-      bases.src + paths.sass
+      bases.src + paths.sass,
     ])
     .pipe($.sass({
       precision: 5,
       outputStyle: 'expanded',
-      sourceComments: true
+      sourceComments: true,
     }).on('error', $.sass.logError))
     .pipe($.concat('app.min.css'))
     .pipe(gulp.dest(bases.dist + 'styles'));
@@ -103,16 +105,17 @@ gulp.task('styles', () => {
 
 // Compile and automatically prefix stylesheets
 gulp.task('styles:build', () => {
-  return gulp.src([
+  gulp.src([
       bases.src + paths.css,
-      bases.src + paths.sass
+      bases.src + paths.sass,
     ])
     .pipe($.sourcemaps.init())
     .pipe($.sass({
-      precision: 5
+      precision: 5,
     }).on('error', $.sass.logError))
     .pipe($.concat('app.css'))
     .pipe(gulp.dest(bases.src + 'styles'))
+
     // .pipe($.uncss({
     //   html: [
     //     'http://stage.rhythmicexcellence.sonnywebdesign.com',
@@ -125,13 +128,18 @@ gulp.task('styles:build', () => {
     //   ]
     // }))
     // Concatenate and minify styles
+
     .pipe($.cssnano({
       autoprefixer: AUTOPREFIXER_BROWSERS,
       safe: true,
-      discardComments: { removeAll: true }
+      discardComments: { removeAll: true },
     }))
-    .pipe($.size({title: 'styles'}))
-    .pipe($.header('/**<%= banner %>**/\n', { banner : VERSION_BANNER} ))
+    .pipe($.size({
+      title: 'styles',
+    }))
+    .pipe($.header('/**<%= banner %>**/\n', {
+      banner: VERSION_BANNER,
+    }))
     .pipe($.rename('app.min.css'))
     .pipe($.sourcemaps.write('.'))
     .pipe(gulp.dest(bases.dist + 'styles'));
@@ -139,52 +147,59 @@ gulp.task('styles:build', () => {
 
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 gulp.task('scripts', () =>
-    gulp.src([
-        // Note: Since we are not using useref in the scripts build pipeline,
-        //       you need to explicitly list your scripts here in the right order
-        //       to be correctly concatenated
-        bases.src + 'bower_components/jquery/dist/jquery.min.js',
-        bases.src + 'scripts/fixElements.js',
-        bases.src + 'scripts/fixImages.js',
-        bases.src + 'scripts/gMap.js',
-        bases.src + 'scripts/readMore.js',
-        bases.src + 'scripts/responsiveMenu.js',
-        bases.src + 'scripts/scrollTop.js',
-        bases.src + 'scripts/submitForm.js',
-        bases.src + 'scripts/app.js'
-      ])
-      .pipe($.newer(bases.tmp + 'scripts'))
-      .pipe($.sourcemaps.init())
-      .pipe($.babel())
-      .pipe($.sourcemaps.write())
-      .pipe($.concat('app.min.js'))
-      .pipe(gulp.dest(bases.tmp + 'scripts'))
-      .pipe($.uglify({
-        preserveComments: false
-      }))
-      .pipe($.header('/**<%= banner %>**/\n', { banner : VERSION_BANNER} ))
-      // Output files
-      .pipe($.size({title: 'scripts'}))
-      .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest(bases.dist + 'scripts'))
+  gulp.src([
+      // Note: Since we are not using useref in the scripts build pipeline,
+      //       you need to explicitly list your scripts here in the right order
+      //       to be correctly concatenated
+      bases.src + 'bower_components/jquery/dist/jquery.min.js',
+      bases.src + 'scripts/fixElements.js',
+      bases.src + 'scripts/fixImages.js',
+      bases.src + 'scripts/gMap.js',
+      bases.src + 'scripts/readMore.js',
+      bases.src + 'scripts/responsiveMenu.js',
+      bases.src + 'scripts/scrollTop.js',
+      bases.src + 'scripts/submitForm.js',
+      bases.src + 'scripts/app.js',
+    ])
+    .pipe($.newer(bases.tmp + 'scripts'))
+    .pipe($.sourcemaps.init())
+    .pipe($.babel())
+    .pipe($.sourcemaps.write())
+    .pipe($.concat('app.min.js'))
+    .pipe(gulp.dest(bases.tmp + 'scripts'))
+    .pipe($.uglify({
+      preserveComments: false,
+    }))
+    .pipe($.header('/**<%= banner %>**/\n', {
+      banner: VERSION_BANNER,
+    }))
+
+    // Output files
+    .pipe($.size({
+      title: 'scripts',
+    }))
+    .pipe($.sourcemaps.write('.'))
+    .pipe(gulp.dest(bases.dist + 'scripts'))
 );
 
 gulp.task('replace', ['copy'], () =>
   gulp.src([
       bases.src + 'header.php',
-      bases.src + 'footer.php'
+      bases.src + 'footer.php',
     ])
     .pipe($.htmlReplace({
-      'css': '<link rel="stylesheet" href="<?php bloginfo(\'template_directory\');?>/styles/app.min.css">',
-      'js': '<script src="<?php bloginfo(\'template_directory\');?>/scripts/app.min.js" async></script>',
-      'version': '<!--' + VERSION_BANNER + '-->'
+      css:      '<link rel="stylesheet" href="<?php bloginfo(\'' +
+                'template_directory\');?>/styles/app.min.css">',
+      js:       '<script src="<?php bloginfo(\'template_directory\'' +
+                ');?>/scripts/app.min.js" async></script>',
+      version:  '<!--' + VERSION_BANNER + '-->',
     }))
     .pipe(gulp.dest(bases.dist))
 );
 
 gulp.task('minifyHtml', ['replace'], () =>
   gulp.src([
-      bases.dist + '*.php'
+      bases.dist + '*.php',
     ])
     .pipe($.minifyInline())
     .pipe(gulp.dest(bases.dist))
@@ -194,36 +209,59 @@ gulp.task('minifyHtml', ['replace'], () =>
 gulp.task('copy', () =>
   gulp.src([
     bases.src + '/*.*',
-    bases.src + '*' + paths.fonts
+    bases.src + '*' + paths.fonts,
   ], {
-    dot: true
+    dot: true,
   }).pipe(gulp.dest(bases.dist))
-    .pipe($.size({title: 'copy'}))
+    .pipe($.size({
+      title: 'copy',
+    }))
 );
+
+// Copy all files at the root level (app)
+gulp.task('themeName', function() {
+  del([
+    bases.dist + '/_style.css',
+  ]);
+
+  return gulp.src([
+      bases.src + '/_style.css',
+    ])
+    .pipe($.rename('style.css'))
+    .pipe(gulp.dest(bases.dist));
+});
 
 // Optimize images
 gulp.task('images', () =>
-  gulp.src(paths.images, {cwd: bases.src})
+  gulp.src(paths.images, {
+    cwd: bases.src,
+  })
     .pipe($.imagemin({
       progressive: true,
-      optimizationLevel: 7
+      optimizationLevel: 7,
     }))
     .pipe($.flatten())
     .pipe(gulp.dest(bases.dist + 'img'))
-    .pipe($.size({title: 'images'}))
+    .pipe($.size({
+      title: 'images',
+    }))
 );
 
 gulp.task('images:uploads', () =>
-  gulp.src('**/*', {cwd: 'content/uploads'})
+  gulp.src('**/*', {
+      cwd: 'content/uploads',
+    })
     .pipe($.imagemin({
       progressive: true,
-      optimizationLevel: 7
+      optimizationLevel: 7,
     }))
     .pipe(gulp.dest('content/uploads'))
-    .pipe($.size({title: 'uploads'}))
+    .pipe($.size({
+      title: 'uploads',
+    }))
 );
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
   gulp.watch(bases.src + 'styles/**/*', ['styles']);
   gulp.watch(bases.src + paths.scripts, ['scripts']);
   gulp.watch(bases.src + '*.php', ['minifyHtml']);
@@ -237,6 +275,7 @@ gulp.task('build', ['clean'], cb =>
     'styles:build',
     ['lint', 'scripts', 'images', 'images:uploads'],
     'minifyHtml',
+    'themeName',
     cb
   )
 );

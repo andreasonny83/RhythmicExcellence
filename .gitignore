@@ -30,6 +30,7 @@ prod.*
 
 # cache
 content/cache
+content/uploads/cache
 
 # Temp
 .temp
