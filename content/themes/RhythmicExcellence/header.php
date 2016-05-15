@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
  RhythmicExcellence
- v1.2.2
+ v1.3.0
  created by Andrea SonnY <andreasonny83@gmail.com>
  license MIT
 -->

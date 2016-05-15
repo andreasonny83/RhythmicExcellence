@@ -3,7 +3,9 @@ function register_menus() {
   register_nav_menus(
     array(
       'header-menu' => __( 'Header Menu' ),
-      'social-menu' => __( 'Social Menu' )
+      'single-menu' => __( 'Single Page Menu' ),
+      'social-menu' => __( 'Social Menu' ),
+      'responsive-menu' => __( 'Responsive Menu' )
     )
   );
 }
