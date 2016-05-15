@@ -16,6 +16,7 @@ task :clean_folder do
                                                   " -o -name '.jshintrc'"\
                                                   " -o -name 'bower.json'"\
                                                   " -o -name 'package.json'"\
+                                                  " -o -name 'gulpfile.babel.js'"\
                                                   " -o -type d -name '.bundle'"\
                                                   " -o -type d -name 'lib'"\
                                                   " -o -type d -name 'config'"\
