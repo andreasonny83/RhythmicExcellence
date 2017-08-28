@@ -280,10 +280,10 @@ class Google extends Feed {
 								$end_utc = $google_end_utc->getTimestamp();
 
 								// Count multiple days.
-								$span = $google_start->setTimezone( $calendar['timezone'] )->diffInDays( $google_end->setTimezone( $calendar['timezone'] ) );
+								$span = $google_start->diffInDays( $google_end );
 
 								if ( $span == 0 ) {
-									if ( $google_start->toDateString() !== $google_end->toDateString() ) {
+									if ( ( $google_start->toDateString() !== $google_end->toDateString() ) && $google_end->toTimeString() != '00:00:00' ) {
 										$span = 1;
 									}
 								}
@@ -317,7 +317,8 @@ class Google extends Feed {
 								'description'    => $description,
 								'link'           => $link,
 								'visibility'     => $visibility,
-								'uid'            => $event->getICalUID(),
+								'uid'            => $event->id,
+								'ical_id'        => $event->getICalUID(),
 								'calendar'       => $this->post_id,
 								'timezone'       => $this->timezone,
 								'start'          => $start,

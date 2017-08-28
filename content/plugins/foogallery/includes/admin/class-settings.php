@@ -10,15 +10,32 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 		function __construct() {
 			add_filter( 'foogallery_admin_settings', array( $this, 'create_settings' ), 10, 2 );
 			add_action( 'foogallery_admin_settings_custom_type_render_setting', array( $this, 'render_custom_setting_types' ) );
+			add_action( 'foogallery_admin_settings_after_render_setting', array( $this, 'after_render_setting' ) );
 
-			// Ajax calls for clearing CSS optimization cache
+			// Ajax calls
 			add_action( 'wp_ajax_foogallery_clear_css_optimizations', array( $this, 'ajax_clear_css_optimizations' ) );
+			add_action( 'wp_ajax_foogallery_thumb_generation_test', array( $this, 'ajax_thumb_generation_test' ) );
+			add_action( 'wp_ajax_foogallery_apply_retina_defaults', array( $this, 'ajax_apply_retina_defaults' ) );
+			add_action( 'wp_ajax_foogallery_uninstall', array( $this, 'ajax_uninstall' ) );
 		}
 
+		/**
+		 * Create the settings for FooGallery
+		 * @return array
+		 */
 		function create_settings() {
 
 			//region General Tab
 			$tabs['general'] = __( 'General', 'foogallery' );
+
+			$settings[] = array(
+				'id'      => 'clear_css_optimizations',
+				'title'   => __( 'Clear CSS Cache', 'foogallery' ),
+				'desc'    => sprintf( __( '%s optimizes the way it loads gallery stylesheets to improve page performance. This can lead to the incorrect CSS being loaded in some cases. Use this button to clear all the CSS optimizations that have been cached across all galleries.', 'foogallery' ), foogallery_plugin_name() ),
+				'type'    => 'clear_optimization_button',
+				'tab'     => 'general',
+				'section' => __( 'Cache', 'foogallery' )
+			);
 
 	        $gallery_templates = foogallery_gallery_templates();
 			$gallery_templates_choices = array();
@@ -81,6 +98,23 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 			);
 
 			$settings[] = array(
+					'id'      => 'caption_desc_source',
+					'title'   => __( 'Caption Description Source', 'foogallery' ),
+					'desc'    => __( 'By default, image caption descriptions are pulled from the attachment "Description" field. Alternatively, you can choose to use other fields.', 'foogallery' ),
+					'type'    => 'select',
+					'choices' => array(
+							'desc' => __('Attachment Description Field', 'foogallery'),
+							'title' => __('Attachment Title Field', 'foogallery'),
+							'caption' => __('Attachment Caption Field', 'foogallery'),
+							'alt' => __('Attachment Alt Field', 'foogallery')
+					),
+					'default' => 'desc',
+					'tab'     => 'general',
+					'section' => __( 'Captions', 'foogallery' ),
+					'spacer'  => '<span class="spacer"></span>'
+			);
+
+			$settings[] = array(
 				'id'      => 'hide_gallery_template_help',
 				'title'   => __( 'Hide Gallery Template Help', 'foogallery' ),
 				'desc'    => __( 'Some gallery templates show helpful tips, which are useful for new users. You can choose to hide these tips.', 'foogallery' ),
@@ -125,11 +159,20 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 			);
 
 			$settings[] = array(
-				'id'      => 'clear_css_optimizations',
-				'title'   => __( 'Clear CSS Cache', 'foogallery' ),
-				'desc'    => sprintf( __( '%s optimizes the way it loads gallery stylesheets to improve page performance. This can lead to the incorrect CSS being loaded in some cases. Use this button to clear all the CSS optimizations that have been cached across all galleries.', 'foogallery' ), foogallery_plugin_name() ),
-				'type'    => 'clear_optimization_button',
+				'id'      => 'default_retina_support',
+				'title'   => __( 'Default Retina Support', 'foogallery' ),
+				'desc'    => __( 'Default retina support for all new galleries that are created. This can also be overridden for each gallery.', 'foogallery' ),
+				'type'    => 'checkboxlist',
+				'choices' => foogallery_retina_options(),
 				'tab'     => 'thumb'
+			);
+
+			$settings[] = array(
+					'id'      => 'use_original_thumbs',
+					'title'   => __( 'Use Original Thumbnails', 'foogallery' ),
+					'desc'    => __( 'Allow for the original thumbnails to be used when possible. This can be useful if your thumbs are animated gifs.<br/>PLEASE NOTE : this will only work if your gallery thumbnail sizes are identical to your thumbnail sizes under Settings -> Media.', 'foogallery' ),
+					'type'    => 'checkbox',
+					'tab'     => 'thumb'
 			);
 
 			$settings[] = array(
@@ -137,6 +180,22 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 				'title'   => __( 'Resize Animated GIFs', 'foogallery' ),
 				'desc'    => __( 'Should animated gifs be resized or not. If enabled, only the first frame is used in the resize.', 'foogallery' ),
 				'type'    => 'checkbox',
+				'tab'     => 'thumb'
+			);
+
+			$settings[] = array(
+				'id'      => 'animated_gif_use_original_image',
+				'title'   => __( 'Show Animated Thumbnails', 'foogallery' ),
+				'desc'    => __( 'If animated GIFs are used, then show the original GIF as the thumbnail.', 'foogallery' ),
+				'type'    => 'checkbox',
+				'tab'     => 'thumb'
+			);
+
+			$settings[] = array(
+				'id'      => 'thumb_generation_test',
+				'title'   => __( 'Thumbnail Generation Test', 'foogallery' ),
+				'desc'    => sprintf( __( 'Test to see if %s can generate the thumbnails it needs.', 'foogallery' ), foogallery_plugin_name() ),
+				'type'    => 'thumb_generation_test',
 				'tab'     => 'thumb'
 			);
 
@@ -194,6 +253,19 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 			);
 			//endregion Language Tab
 
+			//region Uninstall Tab
+			$tabs['uninstall'] = __( 'Uninstall', 'foogallery' );
+
+			$settings[] = array(
+				'id'      => 'uninstall',
+				'title'   => __( 'Full Uninstall', 'foogallery' ),
+				'desc'    => sprintf( __( 'Run a full uninstall of %s, which includes removing all galleries, settings and metadata. This basically removes all traces of the plugin from your system. Please be careful - there is no undo!', 'foogallery' ), foogallery_plugin_name() ),
+				'type'    => 'uninstall',
+				'tab'     => 'uninstall'
+			);
+
+			//endregion Uninstall Tab
+
 			return apply_filters( 'foogallery_admin_settings_override', array(
 				'tabs'     => $tabs,
 				'sections' => array(),
@@ -206,8 +278,39 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 		 */
 		function render_custom_setting_types( $args ) {
 			if ( 'clear_optimization_button' === $args['type'] ) { ?>
-				<input type="button" data-nonce="<?php echo esc_attr( wp_create_nonce( 'foogallery_clear_css_optimizations' ) ); ?>" class="button-primary foogallery_clear_css_optimizations" value="<?php _e( 'Clear CSS Optimization Cache', 'foogallery' ); ?>">
-				<span id="foogallery_clear_css_cache_spinner" style="position: absolute" class="spinner"></span>
+				<div id="foogallery_clear_css_optimizations_container">
+					<input type="button" data-nonce="<?php echo esc_attr( wp_create_nonce( 'foogallery_clear_css_optimizations' ) ); ?>" class="button-primary foogallery_clear_css_optimizations" value="<?php _e( 'Clear CSS Optimization Cache', 'foogallery' ); ?>">
+					<span id="foogallery_clear_css_cache_spinner" style="position: absolute" class="spinner"></span>
+				</div>
+			<?php } else if ( 'uninstall' === $args['type'] ) { ?>
+				<div id="foogallery_uninstall_container">
+					<input type="button" data-nonce="<?php echo esc_attr( wp_create_nonce( 'foogallery_uninstall' ) ); ?>" class="button-primary foogallery_uninstall" value="<?php _e( 'Run Full Uninstall', 'foogallery' ); ?>">
+					<span id="foogallery_uninstall_spinner" style="position: absolute" class="spinner"></span>
+				</div>
+			<?php } else if ( 'thumb_generation_test' === $args['type'] ) { ?>
+				<div id="foogallery_thumb_generation_test_container">
+					<input type="button" data-nonce="<?php echo esc_attr( wp_create_nonce( 'foogallery_thumb_generation_test' ) ); ?>" class="button-primary foogallery_thumb_generation_test" value="<?php _e( 'Run Tests', 'foogallery' ); ?>">
+					<span id="foogallery_thumb_generation_test_spinner" style="position: absolute" class="spinner"></span>
+				</div>
+			<?php }
+		}
+
+		function after_render_setting( $args ) {
+			if ( 'default_retina_support' === $args['id'] ) {
+
+				//build up a list of retina options and add them to a hidden input
+				// so we can get the values on the client
+				$input_ids = array();
+				$count = 0;
+				foreach( foogallery_retina_options() as $retina_option ) {
+					$input_ids[] = '#default_retina_support' . $count;
+					$count++;
+				}
+				$nonce = wp_create_nonce( 'foogallery_apply_retina_defaults' );
+				?><div id="foogallery_apply_retina_support_container">
+					<input type="button" data-inputs="<?php echo implode( ',', $input_ids ); ?>" data-nonce="<?php echo esc_attr( $nonce ); ?>" class="button-primary foogallery_apply_retina_support" value="<?php _e( 'Apply Defaults to all Galleries', 'foogallery' ); ?>">
+					<span id="foogallery_apply_retina_support_spinner" style="position: absolute" class="spinner"></span>
+				</div>
 			<?php }
 		}
 
@@ -219,6 +322,63 @@ if ( ! class_exists( 'FooGallery_Admin_Settings' ) ) {
 				foogallery_clear_all_css_load_optimizations();
 
 				_e('The CSS optimization cache was successfully cleared!', 'foogallery' );
+				die();
+			}
+		}
+
+		/**
+		 * AJAX endpoint for testing thumbnail generation using WPThumb
+		 */
+		function ajax_thumb_generation_test() {
+			if ( check_admin_referer( 'foogallery_thumb_generation_test' ) ) {
+				foogallery_output_thumbnail_generation_results();
+				die();
+			}
+		}
+
+		/**
+		 * AJAX endpoint for applying the retina defaults to all galleries
+		 */
+		function ajax_apply_retina_defaults() {
+			if ( check_admin_referer( 'foogallery_apply_retina_defaults' ) ) {
+
+				$defaults = $_POST['defaults'];
+
+				//extract the settings using a regex
+				$regex = '/foogallery\[default_retina_support\|(?<setting>.+?)\]/';
+
+				preg_match_all($regex, $defaults, $matches);
+
+				$gallery_retina_settings = array();
+
+				if ( isset( $matches[1] ) ) {
+					foreach ( $matches[1] as $match ) {
+						$gallery_retina_settings[$match] = "true";
+					}
+				}
+
+				//go through all galleries and update the retina settings
+				$galleries = foogallery_get_all_galleries();
+				$gallery_update_count = 0;
+				foreach ( $galleries as $gallery ) {
+					update_post_meta( $gallery->ID, FOOGALLERY_META_RETINA, $gallery_retina_settings );
+					$gallery_update_count++;
+				}
+
+				echo sprintf( _n(
+					'1 gallery successfully updated to use the default retina settings.',
+					'%s galleries successfully updated to use the default retina settings.',
+					$gallery_update_count, 'foogallery' ), $gallery_update_count );
+
+				die();
+			}
+		}
+
+		function ajax_uninstall() {
+			if ( check_admin_referer( 'foogallery_uninstall' ) && current_user_can( 'install_plugins' ) ) {
+				foogallery_uninstall();
+
+				_e('All traces of the plugin were removed from your system!', 'foogallery' );
 				die();
 			}
 		}

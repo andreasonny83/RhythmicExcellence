@@ -47,7 +47,8 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 							'foogallery_pages',
 							'foogallery_customcss',
 							'foogallery_sorting',
-							'foogallery_thumb_cache'
+							'foogallery_thumb_settings',
+							'foogallery_retina'
 						) ),
 					'contexts'   => array( 'normal', 'advanced', 'side', ),
 					'priorities' => array( 'high', 'core', 'default', 'low', ),
@@ -105,6 +106,15 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 			);
 
 			add_meta_box(
+				'foogallery_retina',
+				__( 'Retina Support', 'foogallery' ),
+				array( $this, 'render_retina_metabox' ),
+				FOOGALLERY_CPT_GALLERY,
+				'side',
+				'default'
+			);
+
+			add_meta_box(
 				'foogallery_sorting',
 				__( 'Gallery Sorting', 'foogallery' ),
 				array( $this, 'render_sorting_metabox' ),
@@ -114,9 +124,9 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 			);
 
 			add_meta_box(
-				'foogallery_thumb_cache',
-				__( 'Thumbnail Cache', 'foogallery' ),
-				array( $this, 'render_thumb_cache_metabox' ),
+				'foogallery_thumb_settings',
+				__( 'Thumbnails', 'foogallery' ),
+				array( $this, 'render_thumb_settings_metabox' ),
 				FOOGALLERY_CPT_GALLERY,
 				'side',
 				'default'
@@ -145,6 +155,7 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 				wp_verify_nonce( $_POST[FOOGALLERY_CPT_GALLERY . '_nonce'], plugin_basename( FOOGALLERY_FILE ) )
 			) {
 				//if we get here, we are dealing with the Gallery custom post type
+				do_action( 'foogallery_before_save_gallery', $post_id, $_POST );
 
 				$attachments = apply_filters( 'foogallery_save_gallery_attachments', explode( ',', $_POST[FOOGALLERY_META_ATTACHMENTS] ) );
 				update_post_meta( $post_id, FOOGALLERY_META_ATTACHMENTS, $attachments );
@@ -167,6 +178,18 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 					delete_post_meta( $post_id, FOOGALLERY_META_CUSTOM_CSS );
 				} else {
 					update_post_meta( $post_id, FOOGALLERY_META_CUSTOM_CSS, $custom_css );
+				}
+
+				if ( isset( $_POST[FOOGALLERY_META_RETINA] ) ) {
+					update_post_meta( $post_id, FOOGALLERY_META_RETINA, $_POST[FOOGALLERY_META_RETINA] );
+				} else {
+					delete_post_meta( $post_id, FOOGALLERY_META_RETINA );
+				}
+
+				if ( isset( $_POST[FOOGALLERY_META_FORCE_ORIGINAL_THUMBS] ) ) {
+					update_post_meta( $post_id, FOOGALLERY_META_FORCE_ORIGINAL_THUMBS, $_POST[FOOGALLERY_META_FORCE_ORIGINAL_THUMBS] );
+				} else {
+					delete_post_meta( $post_id, FOOGALLERY_META_FORCE_ORIGINAL_THUMBS );
 				}
 
 				do_action( 'foogallery_after_save_gallery', $post_id, $_POST );
@@ -303,7 +326,18 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 							<?php
 							foreach ( $available_templates as $template ) {
 								$selected = ($gallery_template === $template['slug']) ? 'selected' : '';
-								$preview_css = isset( $template['preview_css'] ) ? ' data-preview-css="' . $template['preview_css'] . '" ' : '';
+
+								$preview_css = '';
+								if ( isset( $template['preview_css'] ) ) {
+									if ( is_array( $template['preview_css'] ) ) {
+										//dealing with an array of css files to include
+										$preview_css = implode( ',', $template['preview_css'] );
+									} else {
+										$preview_css = $template['preview_css'];
+									}
+								}
+								$preview_css = empty( $preview_css ) ? '' : ' data-preview-css="' . $preview_css . '" ';
+
 								echo "<option {$selected}{$preview_css} value=\"{$template['slug']}\">{$template['name']}</option>";
 							}
 							?>
@@ -442,11 +476,42 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 				<input type="radio" value="<?php echo $sorting_key; ?>" <?php checked( $sorting_key === $gallery->sorting ); ?> id="FooGallerySettings_GallerySort_<?php echo $sorting_key; ?>" name="<?php echo FOOGALLERY_META_SORT; ?>" />
 				<label for="FooGallerySettings_GallerySort_<?php echo $sorting_key; ?>"><?php echo $sorting_label; ?></label>
 				</p><?php
-			}
+			} ?>
+			<p class="foogallery-help">
+				<?php _e('PLEASE NOTE : sorting randomly will force HTML Caching for the gallery to be disabled.', 'foogallery'); ?>
+			</p>
+			<?php
 		}
 
-		public function render_thumb_cache_metabox( $post ) {
+		public function render_retina_metabox( $post ) {
+			$gallery = $this->get_gallery( $post );
+			$retina_options = foogallery_retina_options();
+			if ( empty( $gallery->retina ) ) {
+				$gallery->retina = foogallery_get_setting( 'default_retina_support', array() );
+			}
 			?>
+			<p>
+				<?php _e('Add retina support to this gallery by choosing the different pixel densities you want to enable.', 'foogallery'); ?>
+			</p>
+			<?php
+			foreach ( $retina_options as $retina_key => $retina_label ) {
+				$checked = array_key_exists( $retina_key, $gallery->retina ) ? ('true' === $gallery->retina[$retina_key]) : false;
+				?>
+				<p>
+				<input type="checkbox" value="true" <?php checked( $checked ); ?> id="FooGallerySettings_Retina_<?php echo $retina_key; ?>" name="<?php echo FOOGALLERY_META_RETINA; ?>[<?php echo $retina_key; ?>]" />
+				<label for="FooGallerySettings_Retina_<?php echo $retina_key; ?>"><?php echo $retina_label; ?></label>
+				</p><?php
+			} ?>
+			<p class="foogallery-help">
+				<?php _e('PLEASE NOTE : thumbnails will be generated for each of the pixel densities chosen, which will increase your website\'s storage space!', 'foogallery'); ?>
+			</p>
+			<?php
+		}
+
+		public function render_thumb_settings_metabox( $post ) {
+			$gallery = $this->get_gallery( $post );
+			$force_use_original_thumbs = get_post_meta( $post->ID, FOOGALLERY_META_FORCE_ORIGINAL_THUMBS, true );
+			$checked = 'true' === $force_use_original_thumbs; ?>
 			<p>
 				<?php _e( 'Clear all the previously cached thumbnails that have been generated for this gallery.', 'foogallery' ); ?>
 			</p>
@@ -455,6 +520,10 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 				<span id="foogallery_clear_thumb_cache_spinner" class="spinner"></span>
 				<?php wp_nonce_field( 'foogallery_clear_gallery_thumb_cache', 'foogallery_clear_gallery_thumb_cache_nonce', false ); ?>
 			</div>
+			<p>
+				<input type="checkbox" value="true" <?php checked( $checked ); ?> id="FooGallerySettings_ForceOriginalThumbs" name="<?php echo FOOGALLERY_META_FORCE_ORIGINAL_THUMBS; ?>" />
+				<label for="FooGallerySettings_ForceOriginalThumbs"><?php _e('Force Original Thumbs', 'foogallery'); ?></label>
+			</p>
 			<?php
 		}
 
@@ -474,7 +543,13 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBoxes' ) ) {
 				//include any admin js required for the templates
 				foreach ( foogallery_gallery_templates() as $template ) {
 					$admin_js = foo_safe_get( $template, 'admin_js' );
-					if ( $admin_js ) {
+					if ( is_array( $admin_js ) ) {
+						//dealing with an array of js files to include
+						foreach( $admin_js as $admin_js_key => $admin_js_src ) {
+							wp_enqueue_script( 'foogallery-gallery-admin-' . $template['slug'] . '-' . $admin_js_key, $admin_js_src, array('jquery', 'media-upload', 'jquery-ui-sortable'), FOOGALLERY_VERSION );
+						}
+					} else {
+						//dealing with a single js file to include
 						wp_enqueue_script( 'foogallery-gallery-admin-' . $template['slug'], $admin_js, array('jquery', 'media-upload', 'jquery-ui-sortable'), FOOGALLERY_VERSION );
 					}
 				}

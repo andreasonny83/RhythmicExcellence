@@ -28,13 +28,13 @@ $ gem install bundler
 or, if you are on El Capitan:
 
 ```sh
-gem install bundler -n /usr/local/bin
+$ gem install bundler -n /usr/local/bin
 ```
 
 Then, from inside your project folder, run:
 
 ```sh
-bundle install
+$ bundle install
 ```
 
 This will install all the Gem dependencies required by Capistrano
@@ -68,7 +68,7 @@ You can simply switch between different WordPress versions from Git.
 Enter inside the wordpress folder present in the app root directory, then run:
 
 ```sh
-$git checkout <WordPress version>
+$ git checkout <WordPress version>
 
 # eg.
 $ git checkout 4.4.2
@@ -136,11 +136,19 @@ The shared folder will be created inside your `deploy_to` path followed by `shar
 This project uses `Gulp` for generating new theme versions.
 Install NodeJS, NPM, then run `npm install` to install all the project dependencies.
 
-While in development mode, run `gulp` from inside the project root directory to compile and watch your `RhythmicExcellence_dev` directory.
+Start the development mode with
+
+```sh
+$ npm start
+```
+
+from inside the project root directory to compile and watch your `RhythmicExcellence_dev` directory.
 
 Once done, compile a distribution version of the theme running
 
-    gulp build
+```sh
+$ npm run build
+```
 
 ## Contributing
 

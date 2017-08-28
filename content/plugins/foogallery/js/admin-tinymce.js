@@ -31,7 +31,7 @@
 
 				var data = window.encodeURIComponent( match ),
 					idRegex = / id=\"(.*?)\"/ig,
-					idMatch = idRegex.exec( match),
+					idMatch = idRegex.exec(match),
 					id = idMatch ? idMatch[1] : 0;
 
 				return '<div class="foogallery-tinymce-view mceNonEditable" data-foogallery="' + data + '" contenteditable="false" data-mce-resize="false" data-mce-placeholder="1" data-foogallery-id="' + id + '">' +
@@ -41,11 +41,11 @@
 					'  </div>' +
 					'  <div class="foogallery-pile">' +
 					'    <div class="foogallery-pile-inner">' +
-					'      <div class="foogallery-pile-inner-thumb">&nbsp;</div>' +
+					'      <div class="foogallery-pile-inner-thumb"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABKBJREFUeNrs3I1P2loYx3EoRaXKiyVXF7Ilg+3//4e2FBDNhPbSYgrIq3vsuZcQJwqywDnw/cUYJG5pzqfPOc9pi+l2t5ciJsdiCCAkEBIIISQQEggJhBASCAmEBEIICYQEQgIhhARCAiGBEEICIYGQQAghgZBASCCEkEBIICQQQkggJBASCCEkEBIICYQQEggJhARCCAmEBEICIYQEQgIhWS+2tkeWTqLP8TwlgXDtycGyZrNZP45Tmig+PeUc5+TkRI4KwveTyWSiMLy7uxsMBpoUotRfLpe7/vTJdV05JK3K0daw/sIwrHvefD4XS30ObDQayVFNJpNKpaJVLepYhff39/PZzMpkRFGrc0tOqftfv4rFouM4+hybrVsJxnE8HAxktGSyKpVKMnftfbDkqP6VBIFMoVJ/UoishW9lnkRGTQivrq8LhYIOhPI98P30/4FwgyZCib46prvs8rWa0k0ifLUgpAj6/b7MZtIinp6eKma29mZEuglpVjvt9nA4FMKzs7N8Pi+TrVges6JtkF8QBM1m87lZTZrD8Xjs+363263VasVS6WgVzbhGKma9Xu+m2ZQFUPBUQyHfM8nG4/b2VhpF3boMCF9G5s9XnURX5tWw292UUC2rEO4ogjedTleNuLwv0+lG/6H8kyiKDqN2DSBUG+o3CD+yrPr+zx8/GvW6NLSmKxpAKKN8kmTVLlD9wvp+Mie3Wi2ZSKUQ655nuqIxa6Fzfr6KUFRka7GR36IbUpfUjVY0g1CGuFKpFIvFF7cI5P3pZOK67jrXnV/4Le81jVY0hlDGt1qrlS4vZVFUV91UMyL19/nLl3evtL3qdxiKxmztZXxt265Wq9dXV2EUDQcDKUrZ0av6e5vwDb9lxZTnyVmi2x3dwyFMJdeapQfJFwrytbzf+HD9HYaiYU+wLe5dLPJX/IyeUY1/CNFKsr2fuYpmE8qId5P8+ZTNB/wMVbSN9ovCsFGvP7+2LGlWF+vih/1erItfq9VVJU4V/h0/z/PUj/JCflS1uKXfcn3Hcax/IVpG+6m5TjWQSjGbzba39lusskyku/BTbyrFRqPx8PAQBMH2flyd2anfQlHWwk6nc1R+KeOenVnlt1A8wnv31sH4HW3MqMLFBy3wM7IKxWw8Hreazfl8jp+pE+nzvYgja1IOf2tPIKSd2cdcuuO18N07yRCuGxnHbDb77fv33Q9oLpfTvwc2owplEPP5/F7OHgi33Q4uT2v7PYcg3OzEV6+jKLq4uMgkH9re75k0Ho0gXNdPzBzHeXx8lIHrtNv9OLYymdR+24p0etDvLz5azAe13yG0bdstl1s3N/JCBiuOY32m9Ol0Wi6Xz1c/V86+8L81758kMkz6/HkXOSrxu3Tdr9Wqbo8optvdnob9ZzqZuzq+L4vQ3ieup+Q+ieu6hUJB/SkOvYZLQ8I/21ENWy3WwrXmrhQxcS0kEEJIICQQEgghJBASCAmEEBIICYQEQggJhARCAiGEBEICIYEQQgIhgZBACCGBkEBIIISQQEggJBBCSCAkEBIIISQQEggJhBASCAmEBEIICYQEQgIhhETX/BZgAHryyaJUyijaAAAAAElFTkSuQmCC" /></div>' +
 					'    </div>' +
 					'  </div>' +
 					'  <div class="foogallery-tinymce-title">&nbsp;</div>' +
-					'  <div class="foogallery-tinymce-count">&nbsp;</div>' +
+					'  <div class="foogallery-tinymce-count">' + match + '</div>' +
 					'</div>';
 			});
 		});
@@ -133,6 +133,8 @@
 
 					if (node.nodeName === 'A' && dom.hasClass(node, 'foogallery-tinymce-toolbar-edit')) {
 						//alert('EDIT : ' + dom.getAttrib( fg, 'data-foogallery-id' ))
+						var win = window.open(node.href, '_blank');
+						win.focus();
 					} else if (node.nodeName === 'DIV' && dom.hasClass(node, 'foogallery-tinymce-toolbar-delete')) {
 						//alert('DELETE : ' + dom.getAttrib( fg, 'data-foogallery-id' ))
 						dom.remove(fg);

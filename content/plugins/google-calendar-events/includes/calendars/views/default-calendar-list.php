@@ -40,6 +40,10 @@ class Default_Calendar_List implements Calendar_View {
 	 */
 	private $start = 0;
 
+	private $first_event = 0;
+
+	private $last_event = 0;
+
 	/**
 	 * Current display end.
 	 *
@@ -134,7 +138,6 @@ class Default_Calendar_List implements Calendar_View {
 			'simcal-qtip' => array(
 				'src'       => SIMPLE_CALENDAR_ASSETS . 'js/vendor/qtip' . $min . '.js',
 				'deps'      => array( 'jquery' ),
-				'ver'       => '2.2.1',
 				'in_footer' => true,
 			),
 			'simcal-default-calendar' => array(
@@ -143,7 +146,6 @@ class Default_Calendar_List implements Calendar_View {
 					'jquery',
 					'simcal-qtip',
 				),
-				'var'       => SIMPLE_CALENDAR_VERSION,
 				'in_footer' => true,
 				'localize'  => array(
 					'simcal_default_calendar' => simcal_common_scripts_variables(),
@@ -167,7 +169,6 @@ class Default_Calendar_List implements Calendar_View {
 		return array(
 			'simcal-default-calendar-list' => array(
 				'src'   => SIMPLE_CALENDAR_ASSETS . 'css/default-calendar-list' . $min . '.css',
-				'ver'   => SIMPLE_CALENDAR_VERSION,
 				'media' => 'all',
 			),
 		);
@@ -184,7 +185,7 @@ class Default_Calendar_List implements Calendar_View {
 
 		if ( $calendar instanceof Default_Calendar ) {
 
-			$disabled = $calendar->static === true ? ' disabled="disabled"' : '';
+			$disabled = $calendar->static === true || empty( $calendar->events ) ? ' disabled="disabled"' : '';
 
 
 			$hide_header = get_post_meta( $this->calendar->id, '_default_calendar_list_header', true ) == 'yes' ? true : false;
@@ -247,17 +248,17 @@ class Default_Calendar_List implements Calendar_View {
 	private function get_events( $timestamp ) {
 
 		$calendar = $this->calendar;
-		$timezone = $calendar->timezone;
 
 		if ( ! $calendar->group_type || ! $calendar->group_span ) {
 			return array();
 		}
 
-		$current = Carbon::createFromTimestamp( $timestamp, $timezone );
+		// Need to pass in timezone here to get beginning of day.
+		$current = Carbon::createFromTimestamp( $timestamp, $calendar->timezone );
 		$prev = clone $current;
 		$next = clone $current;
 
-		$this->start = $current->getTimestamp();
+		$this->start = $timestamp;
 
 		$interval = $span = max( absint( $calendar->group_span ), 1 );
 
@@ -302,12 +303,13 @@ class Default_Calendar_List implements Calendar_View {
 					$second++;
 				}
 			}
+
 			ksort( $flattened_events, SORT_NUMERIC );
 
 			$keys  = array_keys( $flattened_events );
 			$current = 0;
 			foreach ( $keys as $timestamp ) {
-				if ( $timestamp <= $this->start ) {
+				if ( $timestamp < $this->start ) {
 					$current++;
 				}
 			}
@@ -316,20 +318,67 @@ class Default_Calendar_List implements Calendar_View {
 
 			$events_end = isset( $keys[ $current + $interval ] ) ? $keys[ $current + $interval ] : $calendar->end;
 			$this->end  = $events_end > $calendar->end ? $calendar->end : $events_end;
-			// -1 adjusts the interval count to index count, which starts at 0.
-			$this->prev = isset( $keys[ $current - $interval - 1 ] ) ? $keys[ $current - $interval - 1 ] : $calendar->earliest_event;
-			$this->next = isset( $keys[ $current + $interval - 1 ] ) ? $keys[ $current + $interval - 1 ] : $this->end;
+
+			$this->prev = isset( $keys[ $current - $interval ] ) ? $keys[ $current - $interval ] : $calendar->earliest_event;
+			$this->next = isset( $keys[ $current + $interval ] ) ? $keys[ $current + $interval ] : $this->end;
 
 		}
 
 		// Put resulting events in an associative array, with Ymd date as key for easy retrieval in calendar days loop.
+
 		foreach ( $paged_events as $timestamp => $events ) {
+
+			// TODO First $paged_events item timestamp 1 second off? Plus or minus?
+
 			if ( $timestamp <= $this->end ) {
-				$date = Carbon::createFromTimestamp( $timestamp, $calendar->timezone )->endOfDay()->format( 'Ymd' );
-				$daily_events[ intval( $date ) ][] = $events;
+
+				// TODO Could go back to using Carbon to be consistent.
+				// $date is off by a couple hours for dates in multi-day event, but not for first event.
+				// But only certain timezones? UTC-1, UTC+1, UTC+2, UTC+3 ???
+				// Offset changes after first day with these timezones only. Why?
+				// November 1, 2016 is daylight savings for them!!!
+
+				/*
+				$date = Carbon::createFromTimestamp( $timestamp, $calendar->timezone );
+
+				// Add date offset back in?
+				// $date = Carbon::createFromTimestamp( $timestamp + $date->offset, $calendar->timezone );
+
+				$dateYmd = $date->copy()->endOfDay()->format( 'Ymd' );
+				*/
+
+				// Using native PHP 5.3+ (not Carbon) here.
+				// Offset value after first day same behavior as Carbon above still.
+				$dtz = new \DateTimeZone( $calendar->timezone );
+
+				$date = \DateTime::createFromFormat( 'U', $timestamp );
+
+				// Doesn't seem to make a difference omitting timezone.
+				//$date = \DateTime::createFromFormat( 'U', $timestamp, $dtz );
+
+				// Add offset to timestamp to get correct date.
+				// TODO Need to add +1 second also?
+				$offset = $dtz->getOffset( $date );
+				$date_offset = clone $date;
+				$date_offset->add( \DateInterval::createFromDateString( $offset . ' seconds' ) );
+
+				// TODO Multiple day events will be off if part-way through there's daylight savings.
+
+				$dateYmd = $date_offset->format( 'Ymd' );
+				$daily_events[ intval( $dateYmd ) ][] = $events;
 			}
 		}
+
 		ksort( $daily_events, SORT_NUMERIC );
+
+		if ( ! empty( $paged_events ) ) {
+			$first_event       = array_slice( $paged_events, 0, 1, true );
+			$first_event       = array_pop( $first_event );
+			$this->first_event = $first_event[0]->start;
+
+			$last_event       = array_pop( $paged_events );
+			$this->last_event = $last_event[0]->start;
+		}
 
 		return $daily_events;
 	}
@@ -347,27 +396,40 @@ class Default_Calendar_List implements Calendar_View {
 	private function get_heading() {
 
 		$calendar = $this->calendar;
-		$start = Carbon::createFromTimestamp( $this->start, $calendar->timezone );
+		$start = Carbon::createFromTimestamp( $calendar->start, $calendar->timezone );
 		$end = Carbon::createFromTimestamp( $this->end, $calendar->timezone );
 		$date_format = $this->calendar->date_format;
 		$date_order  = simcal_get_date_format_order( $date_format );
 
+		if ( $this->first_event !== 0 ) {
+			$start = Carbon::createFromTimestamp( $this->first_event, $calendar->timezone );
+		}
+
+		if ( $this->last_event !== 0 ) {
+			$end = Carbon::createFromTimestamp( $this->last_event, $calendar->timezone );
+		}
+
+		$st = strtotime( $start->toDateTimeString() );
+		$et = strtotime( $end->toDateTimeString() );
+
+		// TODO Is logic here causing the weird "29 Oct, 2016" format when navigating?
+
 		if ( ( $start->day == $end->day ) && ( $start->month == $end->month ) && ( $start->year == $end->year ) ) {
 			// Start and end on the same day.
 			// e.g. 1 February 2020
-			$large = $small = date_i18n( $calendar->date_format , $this->start );
+			$large = $small = date_i18n( $calendar->date_format , $st );
 			if ( ( $date_order['d'] !== false ) && ( $date_order['m'] !== false ) ) {
 				if ( $date_order['m'] > $date_order['d'] ) {
 					if ( $date_order['y'] !== false && $date_order['y'] > $date_order['m'] ) {
-						$small = date_i18n( 'Y, d M', $this->start );
+						$small = date_i18n( 'Y, d M', $st );
 					} else {
-						$small = date_i18n( 'd M Y', $this->start );
+						$small = date_i18n( 'd M Y', $st );
 					}
 				} else {
 					if ( $date_order['y'] !== false && $date_order['y'] > $date_order['m'] ) {
-						$small = date_i18n( 'Y, M d', $this->start );
+						$small = date_i18n( 'Y, M d', $st );
 					} else {
-						$small = date_i18n( 'M d Y', $this->start );
+						$small = date_i18n( 'M d Y', $st );
 					}
 				}
 			}
@@ -376,16 +438,16 @@ class Default_Calendar_List implements Calendar_View {
 			// e.g. August 2020
 			if ( $date_order['y'] === false ) {
 				// August.
-				$large = $small = date_i18n( 'F', $this->start );
+				$large = $small = date_i18n( 'F', $st );
 			} else {
 				if ( $date_order['y'] < $date_order['m'] ) {
 					// 2020 August.
-					$large = date_i18n( 'Y F', $this->start );
-					$small = date_i18n( 'Y M', $this->start );
+					$large = date_i18n( 'Y F', $st );
+					$small = date_i18n( 'Y M', $st );
 				} else {
 					// August 2020.
-					$large = date_i18n( 'F Y', $this->start );
-					$small = date_i18n( 'M Y', $this->start );
+					$large = date_i18n( 'F Y', $st );
+					$small = date_i18n( 'M Y', $st );
 				}
 			}
 		} elseif ( $start->year == $end->year ) {
@@ -393,25 +455,25 @@ class Default_Calendar_List implements Calendar_View {
 			// e.g. August - September 2020
 			if ( $date_order['y'] === false ) {
 				// August - September.
-				$large = date_i18n( 'F', $this->start ) . ' - ' . date_i18n( 'F', $this->end );
-				$small = date_i18n( 'M', $this->start ) . ' - ' . date_i18n( 'M', $this->end );
+				$large = date_i18n( 'F', $st ) . ' - ' . date_i18n( 'F', $et );
+				$small = date_i18n( 'M', $st ) . ' - ' . date_i18n( 'M', $et );
 			} else {
 				if ( $date_order['y'] < $date_order['m'] ) {
 					// 2020, August - September.
-					$large  = $small = date( 'Y', $this->start ) . ', ';
-					$large .= date_i18n( 'F', $this->start ) . ' - ' . date_i18n( 'F', $this->end );
-					$small .= date_i18n( 'M', $this->start ) . ' - ' . date_i18n( 'M', $this->end );
+					$large  = $small = date( 'Y', $st ) . ', ';
+					$large .= date_i18n( 'F', $st ) . ' - ' . date_i18n( 'F', $et );
+					$small .= date_i18n( 'M', $st ) . ' - ' . date_i18n( 'M', $et );
 				} else {
 					// August - September, 2020.
-					$large  = date_i18n( 'F', $this->start ) . ' - ' . date_i18n( 'F', $this->end ) . ', ';
-					$small  = date_i18n( 'M', $this->start ) . ' - ' . date_i18n( 'M', $this->end ) . ' ';
-					$year   = date( 'Y', $this->start );
+					$large  = date_i18n( 'F', $st ) . ' - ' . date_i18n( 'F', $et ) . ', ';
+					$small  = date_i18n( 'M', $st ) . ' - ' . date_i18n( 'M', $et ) . ' ';
+					$year   = date( 'Y', $st );
 					$large .= $year;
 					$small .= $year;
 				}
 			}
 		} else {
-			$large = $small = date( 'Y', $this->start ) . ' - ' . date( 'Y', $this->end );
+			$large = $small = date( 'Y', $st ) . ' - ' . date( 'Y', $et );
 		}
 
 		return array(
@@ -444,12 +506,9 @@ class Default_Calendar_List implements Calendar_View {
 			}
 		}
 
-		$feed          = simcal_get_feed( $calendar );
-		$feed_timezone = get_post_meta( $feed->post_id, '_feed_timezone', true );
-
 		$now = $calendar->now;
 		$current_events = $this->get_events( $timestamp );
-		$day_format = explode( ' ', $calendar->date_format );
+		$format = $calendar->date_format;
 
 		ob_start();
 
@@ -470,15 +529,19 @@ class Default_Calendar_List implements Calendar_View {
 
 		if ( ! empty( $current_events ) && is_array( $current_events ) ) :
 
+			$last_event = null;
+
 			foreach ( $current_events as $ymd => $events ) :
-
-
 
 				// This is where we can find out if an event is a multi-day event and if it needs to be shown.
 				// Since this is for list view we are showing the event on the day viewed if it is part of that day even when
 				// expand multi-day events are turned off.
-				if ( isset( $events[0][0]->multiple_days ) && $events[0][0]->multiple_days > 0 ) {
-					if ( 'current_day_only' == get_post_meta($calendar->id, '_default_calendar_expand_multi_day_events', true ) ) {
+
+				$first_event = $events[0][0];
+
+				if ( isset( $first_event->multiple_days ) && $first_event->multiple_days > 0 ) {
+
+					if ( 'current_day_only' == get_post_meta( $calendar->id, '_default_calendar_expand_multi_day_events', true ) ) {
 
 						$year  = substr( $ymd, 0, 4 );
 						$month = substr( $ymd, 4, 2 );
@@ -486,45 +549,52 @@ class Default_Calendar_List implements Calendar_View {
 
 						$temp_date = Carbon::createFromDate( $year, $month, $day );
 
-						if( ! ( $temp_date < Carbon::now()->endOfDay() ) ) {
-							continue;
+						if ( ! ( $temp_date < Carbon::now()->endOfDay() ) ) {
+
+							// Break here only if event already shown once.
+							if ( $last_event == $first_event ) {
+								continue;
+							} else {
+								// Save event as "last" for next time through, then break.
+								$last_event = $first_event;
+							}
 						}
 					}
 				}
 
-				$day_ts = Carbon::createFromFormat( 'Ymd', $ymd, $calendar->timezone )->getTimestamp();
+				// Add offset offset for list view day headings.
+				$day_date = Carbon::createFromFormat( 'Ymd', $ymd, $calendar->timezone );
+				$day_date_offset = clone $day_date;
+				$day_date_offset->addSeconds( $day_date->offset );
+				$day_date_ts_offset = $day_date_offset->timestamp;
 
-				if ( ! $calendar->compact_list ) :
-
-					$date = new Carbon( 'now', $calendar->timezone );
-					$date->setLocale( substr( get_locale(), 0, 2 ) );
-					$date->setTimestamp( $day_ts );
-
-					if ( $date->isToday() ) {
+				if ( ! $calendar->compact_list ) {
+					if ( $day_date_offset->isToday() ) {
 						$the_color = new Color( $calendar->today_color );
 					} else {
 						$the_color = new Color( $calendar->days_events_color );
 					}
 
-					$bg_color = '#' . $the_color->getHex();
-					$color = $the_color->isDark() ? '#ffffff' : '#000000';
+					$bg_color     = '#' . $the_color->getHex();
+					$color        = $the_color->isDark() ? '#ffffff' : '#000000';
 					$border_style = ' style="border-bottom: 1px solid ' . $bg_color . ';" ';
-					$bg_style = ' style="background-color: ' . $bg_color . '; color: ' . $color . ';"';
+					$bg_style     = ' style="background-color: ' . $bg_color . '; color: ' . $color . ';"';
 
 					echo "\t" . '<dt class="simcal-day-label"' . $border_style . '>';
-					echo '<span' . $bg_style .'>';
-					foreach ( $day_format as $format ) {
-						echo $format ? '<span class="simcal-date-format" data-date-format="' . $format . '">' . date_i18n( $format, $day_ts ) . '</span> ' : ' ';
-					}
+					echo '<span' . $bg_style . '>';
+
+					echo $format ? '<span class="simcal-date-format" data-date-format="' . $format . '">' . date_i18n( $format, $day_date_ts_offset, strtotime( $day_date_offset->toDateTimeString() ) ) . '</span> ' : ' ';
+
 					echo '</span>';
 					echo '</dt>' . "\n";
-
-				endif;
+				}
 
 				$list_events = '<ul class="simcal-events">' . "\n";
 
 				$calendar_classes = array();
-				$day_classes = 'simcal-weekday-' . date( 'w', $day_ts );
+
+				// Add day of week number to CSS class.
+				$day_classes = 'simcal-weekday-' . date( 'w', $day_date_ts_offset );
 
 				// Is this the present, the past or the future, Doc?
 				if ( $timestamp <= $now && $timestamp >= $now ) {
@@ -542,12 +612,6 @@ class Default_Calendar_List implements Calendar_View {
 
 						if ( $event instanceof Event ) :
 
-							if ( $feed->type == 'grouped-calendars' ) {
-								date_default_timezone_set( $feed_timezone );
-							} else {
-								date_default_timezone_set( $event->timezone );
-							}
-
 							$event_classes = $event_visibility = '';
 
 							$calendar_class     = 'simcal-events-calendar-' . strval( $event->calendar );
@@ -564,15 +628,13 @@ class Default_Calendar_List implements Calendar_View {
 								$event_visibility = ' style="display: none"';
 							endif;
 
-							$event_color = '';
-							$bullet = '';
 							$event_color = $event->get_color();
 							if ( ! empty( $event_color ) ) {
 								$side = is_rtl() ? 'right' : 'left';
 								$event_color = ' style="border-' . $side . ': 4px solid ' . $event_color . '; padding-' . $side . ': 8px;"';
 							}
 
-							$list_events .= "\t" . '<li class="' . $event_classes . '"' . $event_visibility . $event_color . ' itemscope itemtype="http://schema.org/Event">' . "\n";
+							$list_events .= "\t" . '<li class="' . $event_classes . '"' . $event_visibility . $event_color . ' itemscope itemtype="http://schema.org/Event" data-start="' . esc_attr( $event->start ) . '">' . "\n";
 							$list_events .= "\t\t" . '<div class="simcal-event-details">' . $calendar->get_event_html( $event ) . '</div>' . "\n";
 							$list_events .= "\t" . '</li>' . "\n";
 
@@ -614,7 +676,7 @@ class Default_Calendar_List implements Calendar_View {
 			$message = get_post_meta( $calendar->id, '_no_events_message', true );
 
 			if ( 'events' == $calendar->group_type ) {
-				echo ! empty( $message ) ? $message : __( 'Nothing to show.', 'google-calendar-events' );
+				echo ! empty( $message ) ? $message : __( 'There are no upcoming events.', 'google-calendar-events' );
 			} else {
 				if ( ! empty( $message ) ) {
 					echo $message;
@@ -634,8 +696,6 @@ class Default_Calendar_List implements Calendar_View {
 		endif;
 
 		echo '</' . $block_tag . '>';
-
-		date_default_timezone_set( $calendar->site_timezone );
 
 		return ob_get_clean();
 	}

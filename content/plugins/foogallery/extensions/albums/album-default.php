@@ -22,6 +22,7 @@ if ( false !== $foogallery ) {
 	echo '<div id="' . $current_foogallery_album->slug . '" class="foogallery-album-header">';
 	echo '<p><a href="' . esc_url( $album_url ) . '">' . foogallery_get_setting( 'language_back_to_album_text', __( '&laquo; back to album', 'foogallery' ) ) . '</a></p>';
 	echo '<h2>' . $foogallery->name . '</h2>';
+	echo apply_filters('foogallery_album_default_gallery_content', '', $foogallery);
 	echo '</div>';
 	echo do_shortcode('[foogallery id="' . $foogallery->ID . '"]');
 } else {
@@ -51,11 +52,12 @@ if ( false !== $foogallery ) {
 				$img_html = $attachment->html_img( $args );
 				$images = $gallery->image_count();
 				$gallery_link = foogallery_album_build_gallery_link( $current_foogallery_album, $gallery );
+				$gallery_link_target = foogallery_album_build_gallery_link_target( $current_foogallery_album, $gallery );
 				?>
 				<li>
 					<div class="foogallery-pile">
 						<div class="foogallery-pile-inner">
-							<a href="<?php echo esc_url( $gallery_link ); ?>">
+							<a href="<?php echo esc_url( $gallery_link ); ?>" target="<?php echo $gallery_link_target; ?>">
 								<?php echo $img_html; ?>
 								<?php
 

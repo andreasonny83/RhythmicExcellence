@@ -534,6 +534,16 @@ class WP_Thumb {
 	}
 
 	/**
+	 * Returns the error
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function error() {
+		return empty( $this->error ) ? null : $this->error;
+	}
+
+	/**
 	 * Return the finished image
 	 *
 	 * If there was an error, return the original
@@ -780,7 +790,7 @@ function wpthumb_add_image_editors( $editors ) {
 	return array_unique( array_merge( $wpthumb_editors, $editors ) );
 }
 
-add_filter( 'wp_image_editors', 'wpthumb_add_image_editors' );
+add_filter( 'wp_image_editors', 'wpthumb_add_image_editors', 99 );
 
 function wpthumb_create_args_from_size( $args = '' ) {
 

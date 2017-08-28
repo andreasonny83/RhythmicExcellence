@@ -53,9 +53,14 @@
 	FOOGALLERY.includePreviewCss = function() {
 		var selectedPreviewCss = $('#FooGallerySettings_GalleryTemplate').find(":selected").data('preview-css');
 
+		//remove any previously added preview css
+		$('link[data-foogallery-preview-css]').remove();
+
 		if ( selectedPreviewCss ) {
-			$('#foogallery-preview-css').remove();
-			$('head').append('<link id="foogallery-preview-css" rel="stylesheet" href="' + selectedPreviewCss +'" type="text/css" />');
+			var splitPreviewCss = selectedPreviewCss.split(',');
+			for (var i = 0, l = splitPreviewCss.length; i < l; i++) {
+				$('head').append('<link data-foogallery-preview-css rel="stylesheet" href="' + splitPreviewCss[i] + '" type="text/css" />');
+			}
 		}
 	};
 
@@ -145,7 +150,10 @@
 			})
 			.on( 'open', function() {
 				var selection = FOOGALLERY.media_uploader.state().get('selection');
-				if (selection) { selection.set(); }   //clear any previos selections
+				if (selection) {
+					//clear any previous selections
+					selection.reset();
+				}
 
 				if (FOOGALLERY.selected_attachment_id > 0) {
 					var attachment = wp.media.attachment(FOOGALLERY.selected_attachment_id);
