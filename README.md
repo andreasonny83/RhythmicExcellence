@@ -12,24 +12,46 @@ This project is based on [Wordpress Capistrano Boilerplate](https://github.com/S
 
 First clone this project on your local machine with
 
-    git clone --recursive https://github.com/andreasonny83/RhythmicExcellence.git
+```sh
+$ git clone --recursive https://github.com/andreasonny83/RhythmicExcellence.git
+```
 
 ### Install the Ruby dependencies
 
 We are going to use [Bundler](http://bundler.io/). Bundler provides a consistent environment for Ruby projects by tracking and installing the exact gems and versions that are needed.
 If you don't have Bundler already installed in your machine, open a terminal window and run this command:
 
-    gem install bundler
+```sh
+$ gem install bundler
+```
 
 or, if you are on El Capitan:
 
-    gem install bundler -n /usr/local/bin
+```sh
+gem install bundler -n /usr/local/bin
+```
 
 Then, from inside your project folder, run:
 
-    bundle install
+```sh
+bundle install
+```
 
 This will install all the Gem dependencies required by Capistrano
+
+### Install the Node dependencies
+
+Then install all the node dependencies with
+
+```sh
+$ npm install
+```
+
+Or using Yarn with
+
+```sh
+$ yarn
+```
 
 ## SSH
 
@@ -42,12 +64,15 @@ If a password is required when you log in, you may need to set up SSH keys. [Git
 ## WordPress as a submodule
 
 This project uses WordPress as a git submodule which is super handy and helps keep your structure more modular.
-You can simply switch between different WordPress versions from Git with
+You can simply switch between different WordPress versions from Git.
+Enter inside the wordpress folder present in the app root directory, then run:
 
-    git checkout <WordPress version>
+```sh
+$git checkout <WordPress version>
 
-    eg.
-    git checkout 4.4.2
+# eg.
+$ git checkout 4.4.2
+```
 
 Wordpress should be already present in your project directory as a submodule. Reach the WP folder with `cd wordpress` and fetch all the latest tags with `git fetch --tags && git tag`.
 Now you can simply select the WordPress version you want to run in your project with `git checkout {version_number}` (eg. `git checkout 4.4.2`)
@@ -55,16 +80,17 @@ Now you can simply select the WordPress version you want to run in your project 
 ## Project Settings
 
 Great, now you're almost ready for rendering your WordPress website.
+First we need a database.
+Create or clone your local database and configure your `config.php` with your settings.
 
-First we need a database. Create or clone your local database and configure your `dev.config.php` with your settings.
+`config.php` will be only used on your local environment and won't we deploy to your server folder. We already mentioned that inside the `.gitignore` file for you :sunglasses:
 
-`dev.config.php` will be only used on your local environment and won't we deploy to your server folder. We already mentioned that inside the `.gitignore` file for you :sunglasses:
+Inside your `wp-config.php` we already set some constants to a default value like `DB_CHARSET`, `DB_COLLATE` and `WPLANG`. Feel free to edit this file with your custom settings.
 
-Inside `wp-config.php` we already set some constants to a default value like `DB_CHARSET`, `DB_COLLATE` and `WPLANG`. Feel free to edit this file with your custom settings.
 In the same file, there is a section called `Custom Directory`, here we tell WordPress our new file structure.
 We also try to include a `config.php`. This will contain your server database configuration and will be stored inside your server `shared` folder from where Capistrano will create a symlink inside your project folder so you don't need to do it manually.
 
-Now, if you have correctly configured your database and your `dev.config.php` you should be able to run your local environment using some PHP and MySQL tool like MAMP.
+Now, if you have correctly configured your database and your `config.php` you should be able to run your local environment using some PHP and MySQL tool like MAMP.
 
 #### Be careful
 

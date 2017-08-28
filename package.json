@@ -4,6 +4,8 @@
   "description": "This is a WordPress project running on www.rhythmicExcellence.lonon",
   "main": "index.php",
   "scripts": {
+    "build": "gulp build",
+    "postinstall": "cp config.sample.php config.php",
     "test": "git status && echo 'no test present'; exit 1"
   },
   "repository": {
