@@ -3,6 +3,7 @@ logs
 *.log
 npm-debug.log*
 *error_log
+php-errors.log
 
 # Dependency directory
 node_modules

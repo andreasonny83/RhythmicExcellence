@@ -100,7 +100,7 @@ We already defined a `.httaccess` sample file for you to use. Because the `Rewri
 
 Now that we have completed the project structure, we can start thinking about the deployment process with Capistrano.
 
-By default, this boilerplate allows you to run `bundle exec cap deploy` to 2 different environments: `stage` and `prod` where stage will deploy your `develop` branch and prod is pointing to your `master` one. All the configuration for the different environments are stored inside the correspondent `.rb` file inside your `config/deploy` folder.
+By default, this boilerplate allows you to run `bundle exec cap {environment_name} deploy` to 2 different environments: `stage` and `prod` where stage will deploy your `develop` branch and prod is pointing to your `master` one. All the configuration for the different environments are stored inside the correspondent `.rb` file inside your `config/deploy` folder.
 
 ##### cofig/deploy.rb
 
@@ -150,13 +150,31 @@ Once done, compile a distribution version of the theme running
 $ npm run build
 ```
 
+## Deployment
+
+To deploy into the production environment straight away,
+just use the npm deploy task
+
+```sh
+$ npm run deploy
+```
+
+Remember to push your local changes to master before deploying as Capistrano will
+pull the latestes mater changes into your remote server when triggered.
+
+**This task will:**
+
+* Install all the Bower dependencies needed
+* Build a brand new version of the project
+* Deploy the generated build version into your production environment using Capistrano
+
 ## Contributing
 
 1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request
+1. Create your feature branch: `git checkout -b my-new-feature`
+1. Commit your changes: `git commit -m 'Add some feature'`
+1. Push to the branch: `git push origin my-new-feature`
+1. Submit a pull request
 
 ## License
 
