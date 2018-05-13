@@ -16,6 +16,10 @@
           <input class="textarea" id="email" tabindex="2" class="input" name="form_email" type="text" value="" size="30"><br>
           <label>Your message:</label>
           <textarea class="textarea" id="message" tabindex="3" class="input" name="form_message" rows="7" cols="30"></textarea><br>
+          <p><input type="checkbox" name="terms" required>
+            *I consent to heaving RhythmicExcellence collect my name and email.
+            To know more about, please check out our <a href="/privacy-policy">Privacy policy</a> page.
+          </p>
           <div class="g-recaptcha" data-sitekey="6LehGQYTAAAAAD0qR1EUETPB73lT9cKljw3yMEqu"></div>
           <input id="submit_button" class="materialButton square" tabindex="4" type="submit" value="Send email" name="form_contact_submit">
         </form>
